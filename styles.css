@@ -5,7 +5,7 @@
 
 /* ---------- CSS Custom Properties ---------- */
 :root {
-  /* Colors */
+  /* Default Dark Theme Colors */
   --bg-primary: #0f0f23;
   --bg-secondary: #1a1a2e;
   --bg-card: rgba(30, 30, 60, 0.7);
@@ -28,13 +28,13 @@
   --border: rgba(255, 255, 255, 0.08);
   --border-focus: rgba(76, 175, 80, 0.5);
 
-  /* Status colors */
-  --status-available: #4CAF50;
-  --status-booked: #FFC107;
-  --status-sold: #F44336;
-  --status-contract: #2196F3;
+  /* Shared Properties */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
 
-  /* Spacing */
   --space-xs: 4px;
   --space-sm: 8px;
   --space-md: 16px;
@@ -42,29 +42,50 @@
   --space-xl: 32px;
   --space-2xl: 48px;
 
-  /* Radii */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  --radius-full: 9999px;
-
-  /* Shadows */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
   --shadow-glow: 0 0 20px var(--accent-glow);
 
-  /* Font */
   --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-
-  /* Nav */
   --nav-height: 64px;
   --header-height: 56px;
+
+  /* Status Colors */
+  --status-available: #4CAF50;
+  --status-booked: #FFC107;
+  --status-sold: #F44336;
+  --status-contract: #2196F3;
+}
+
+[data-theme="light"] {
+  /* Light Theme Overrides */
+  --bg-primary: #f5f5f7;
+  --bg-secondary: #ffffff;
+  --bg-card: rgba(255, 255, 255, 0.8);
+  --bg-card-solid: #ffffff;
+  --bg-glass: rgba(0, 0, 0, 0.05);
+  --bg-glass-hover: rgba(0, 0, 0, 0.1);
+  --bg-input: rgba(0, 0, 0, 0.05);
+  --bg-input-focus: rgba(0, 0, 0, 0.08);
+
+  --text-primary: #1d1d1f;
+  --text-secondary: #48484a;
+  --text-muted: #8e8e93;
+
+  --border: rgba(0, 0, 0, 0.1);
+  --border-focus: rgba(76, 175, 80, 0.4);
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.15);
+  --shadow-glow: 0 0 20px rgba(76, 175, 80, 0.2);
 }
 
 /* ---------- Reset ---------- */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -93,10 +114,22 @@ body {
 }
 
 /* ---------- Scrollbar ---------- */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: var(--radius-full); }
-::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
 
 /* ---------- PIN Lock Screen ---------- */
 .pin-overlay {
@@ -123,8 +156,17 @@ body {
 }
 
 @keyframes pinPulse {
-  0%, 100% { opacity: 0.3; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(1.1); }
+
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
 }
 
 .pin-logo {
@@ -134,8 +176,15 @@ body {
 }
 
 @keyframes logoFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .pin-title {
@@ -183,9 +232,21 @@ body {
 }
 
 @keyframes pinShake {
-  0%, 100% { transform: translateX(0); }
-  20%, 60% { transform: translateX(-8px); }
-  40%, 80% { transform: translateX(8px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20%,
+  60% {
+    transform: translateX(-8px);
+  }
+
+  40%,
+  80% {
+    transform: translateX(8px);
+  }
 }
 
 .pin-keypad {
@@ -403,9 +464,17 @@ body {
   background: var(--accent-gradient);
 }
 
-.stat-card.sold::before { background: linear-gradient(135deg, #F44336, #E91E63); }
-.stat-card.projects::before { background: linear-gradient(135deg, #2196F3, #00BCD4); }
-.stat-card.booked::before { background: linear-gradient(135deg, #FFC107, #FF9800); }
+.stat-card.sold::before {
+  background: linear-gradient(135deg, #F44336, #E91E63);
+}
+
+.stat-card.projects::before {
+  background: linear-gradient(135deg, #2196F3, #00BCD4);
+}
+
+.stat-card.booked::before {
+  background: linear-gradient(135deg, #FFC107, #FF9800);
+}
 
 .stat-value {
   font-size: 1.75rem;
@@ -534,10 +603,25 @@ body {
   letter-spacing: 0.3px;
 }
 
-.status-badge.available { background: rgba(76, 175, 80, 0.15); color: var(--status-available); }
-.status-badge.booked { background: rgba(255, 193, 7, 0.15); color: var(--status-booked); }
-.status-badge.sold { background: rgba(244, 67, 54, 0.15); color: var(--status-sold); }
-.status-badge.contract { background: rgba(33, 150, 243, 0.15); color: var(--status-contract); }
+.status-badge.available {
+  background: rgba(76, 175, 80, 0.15);
+  color: var(--status-available);
+}
+
+.status-badge.booked {
+  background: rgba(255, 193, 7, 0.15);
+  color: var(--status-booked);
+}
+
+.status-badge.sold {
+  background: rgba(244, 67, 54, 0.15);
+  color: var(--status-sold);
+}
+
+.status-badge.contract {
+  background: rgba(33, 150, 243, 0.15);
+  color: var(--status-contract);
+}
 
 /* ---------- Forms ---------- */
 .form-group {
@@ -859,8 +943,13 @@ body {
   backdrop-filter: blur(4px);
 }
 
-.carousel-nav.prev { left: var(--space-sm); }
-.carousel-nav.next { right: var(--space-sm); }
+.carousel-nav.prev {
+  left: var(--space-sm);
+}
+
+.carousel-nav.next {
+  right: var(--space-sm);
+}
 
 .carousel-dots {
   position: absolute;
@@ -1157,8 +1246,13 @@ body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .modal-content {
@@ -1172,8 +1266,15 @@ body {
 }
 
 @keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .modal-title {
@@ -1215,17 +1316,36 @@ body {
   gap: var(--space-sm);
 }
 
-.toast.success { border-left: 3px solid var(--accent); }
-.toast.error { border-left: 3px solid var(--status-sold); }
+.toast.success {
+  border-left: 3px solid var(--accent);
+}
+
+.toast.error {
+  border-left: 3px solid var(--status-sold);
+}
 
 @keyframes toastIn {
-  from { transform: translateX(-50%) translateY(20px); opacity: 0; }
-  to { transform: translateX(-50%) translateY(0); opacity: 1; }
+  from {
+    transform: translateX(-50%) translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
 }
 
 @keyframes toastOut {
-  from { transform: translateX(-50%) translateY(0); opacity: 1; }
-  to { transform: translateX(-50%) translateY(20px); opacity: 0; }
+  from {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateX(-50%) translateY(20px);
+    opacity: 0;
+  }
 }
 
 /* ---------- Empty State ---------- */
@@ -1275,7 +1395,9 @@ body {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ---------- File Input ---------- */

@@ -1,9 +1,6 @@
-// ============================================================
-// ArtVault — Service Worker
-// Cache-first strategy for offline support
-// ============================================================
-
-const CACHE_NAME = 'artvault-v1';
+// Update this version string when you want to force a refresh for all users
+const VERSION = '1.0.2';
+const CACHE_NAME = 'artvault-' + VERSION;
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -22,7 +19,7 @@ self.addEventListener('install', (event) => {
       return cache.addAll(STATIC_ASSETS);
     })
   );
-  self.skipWaiting();
+  // Removed self.skipWaiting() to allow for controlled UI-driven updates
 });
 
 // Activate: clean old caches

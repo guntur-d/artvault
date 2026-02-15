@@ -116,6 +116,21 @@ function statusLabel(s) {
 const STATUSES = ['Available', 'Booked', 'Sold', 'Under Contract'];
 const THEMES = ['Pemandangan', 'Abstrak', 'Potret', 'Alam Benda', 'Modern', 'Klasik', 'Lainnya'];
 
+// ==================== Theme Management ====================
+const THEME_KEY = 'artvault_theme';
+let currentTheme = localStorage.getItem(THEME_KEY) || 'dark';
+
+function initTheme() {
+    document.documentElement.setAttribute('data-theme', currentTheme);
+}
+
+function toggleTheme() {
+    currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    localStorage.setItem(THEME_KEY, currentTheme);
+    m.redraw();
+}
+
 // ==================== Toast ====================
 let toastMsg = null, toastType = 'success', toastTimer = null;
 function showToast(msg, type = 'success') {
@@ -222,17 +237,22 @@ const PinLock = {
 let cameraStream = null, cameraActive = false, cameraCallback = null;
 
 const CameraModal = {
-    oncreate: (vnode) => {
-        const video = vnode.dom.querySelector('video');
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 960 } } })
-            .then(stream => { cameraStream = stream; video.srcObject = stream; video.play(); })
-            .catch(err => { showToast('Gagal mengakses kamera: ' + err.message, 'error'); closeCamera(); });
-    },
     view: () => {
         if (!cameraActive) return null;
         return m('.camera-modal', [
             m('.camera-preview', [
-                m('video', { autoplay: true, playsinline: true }),
+                m('video', {
+                    autoplay: true,
+                    playsinline: true,
+                    oncreate: (vnode) => {
+                        const video = vnode.dom;
+                        navigator.mediaDevices.getUserMedia({
+                            video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 960 } }
+                        })
+                            .then(stream => { cameraStream = stream; video.srcObject = stream; video.play(); })
+                            .catch(err => { showToast('Gagal mengakses kamera: ' + err.message, 'error'); closeCamera(); });
+                    }
+                }),
                 m('canvas', { style: { display: 'none' } })
             ]),
             m('.camera-controls', [
@@ -256,8 +276,9 @@ function capturePhoto() {
     const canvas = document.querySelector('.camera-modal canvas');
     if (!video || !canvas) return;
     canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-    canvas.getContext('2d').drawImage(video, 0, 0);
-    const base64 = canvas.toDataURL('image/jpeg', 0.7);
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0);
+    const base64 = canvas.toDataURL('image/jpeg', 0.8);
     if (cameraCallback) cameraCallback(base64);
     closeCamera();
 }
@@ -276,7 +297,13 @@ const Layout = {
         const currentRoute = m.route.get() || '/';
         return m('#app', [
             m('.app-header', [
-                m('.header-title', ['🎨 ', m('span', 'ArtVault')]),
+                m('.header-title', ['🎨 ', m('span', 'ArtVault - Koko_Kotagede')]),
+                m('.header-actions', [
+                    m('button.header-btn', {
+                        onclick: toggleTheme,
+                        title: currentTheme === 'dark' ? 'Mode Terang' : 'Mode Gelap'
+                    }, currentTheme === 'dark' ? '☀️' : '🌙'),
+                ])
             ]),
             m('.main-content', vnode.children),
             m('.bottom-nav', navItems.map(item =>
@@ -705,6 +732,14 @@ const SettingsView = {
     view: function () {
         return m(Layout, [
             m('.section-title', { style: 'margin-bottom:16px' }, 'Pengaturan & Utilitas'),
+            // Theme Toggle
+            m('.settings-item', { onclick: toggleTheme }, [
+                m('.settings-icon', currentTheme === 'dark' ? '☀️' : '🌙'),
+                m('.settings-text', [
+                    m('h3', 'Mode ' + (currentTheme === 'dark' ? 'Terang' : 'Gelap')),
+                    m('p', 'Ubah tampilan aplikasi ke mode ' + (currentTheme === 'dark' ? 'terang' : 'gelap'))
+                ])
+            ]),
             // Report
             m('.settings-item', { onclick: () => m.route.set('/report') }, [
                 m('.settings-icon', '📊'), m('.settings-text', [m('h3', 'Laporan'), m('p', 'Lihat laporan per proyek dan nilai penjualan')])
@@ -864,6 +899,7 @@ function resetPin() {
 
 // ==================== Routing ====================
 document.addEventListener('DOMContentLoaded', async () => {
+    initTheme();
     await openDB();
     // Check deadlines on load
     if ('Notification' in window && Notification.permission === 'granted') checkDeadlines();

@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#4CAF50">
   <meta name="description" content="ArtVault — Aplikasi manajemen inventaris lukisan untuk seniman profesional">
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>ArtVault — Inventaris Lukisan</title>
 
@@ -21,8 +22,11 @@
   <link rel="stylesheet" href="styles.css">
 
   <!-- Favicon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🎨</text></svg>" type="image/svg+xml">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🎨</text></svg>"
+    type="image/svg+xml">
 </head>
+
 <body>
 
   <!-- App Mount Point -->
@@ -34,15 +38,42 @@
   <!-- App Logic -->
   <script src="app.js"></script>
 
-  <!-- Service Worker Registration -->
+  <!-- Service Worker Registration & Update Logic -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/service-worker.js')
-          .then((reg) => console.log('[App] SW registered:', reg.scope))
+          .then((reg) => {
+            console.log('[App] SW registered:', reg.scope);
+
+            // Detect updates
+            reg.onupdatefound = () => {
+              const installingWorker = reg.installing;
+              installingWorker.onstatechange = () => {
+                if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  // A new update is available and has been pre-cached
+                  console.log('[App] New update available! Reloading...');
+                  // Optional: Show a "Update Available" button instead of auto-reload
+                  if (confirm('Versi baru tersedia! Muat ulang sekarang untuk pembaruan?')) {
+                    location.reload();
+                  }
+                }
+              };
+            };
+          })
           .catch((err) => console.error('[App] SW registration failed:', err));
+      });
+
+      // Handle the "skipWaiting" refresh
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) {
+          refreshing = true;
+          window.location.reload();
+        }
       });
     }
   </script>
 </body>
+
 </html>
